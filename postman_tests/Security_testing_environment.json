@@ -1,0 +1,15 @@
+{
+	"id": "59387ad7-a53c-458b-8f22-7a3d59ff644b",
+	"name": "New Environment",
+	"values": [
+		{
+			"key": "openai_api_key",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2025-06-09T23:00:57.932Z",
+	"_postman_exported_using": "Postman/11.49.0"
+}

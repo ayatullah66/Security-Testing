@@ -1,0 +1,334 @@
+{
+	"info": {
+		"_postman_id": "6b025d1f-3c6d-4760-a6a4-db553c205294",
+		"name": "Security Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13777678",
+		"_collection_link": "https://grey-zodiac-326850.postman.co/workspace/Team-Workspace~eae91f9c-5641-4034-8bdd-b9f2ed0266b1/collection/13777678-6b025d1f-3c6d-4760-a6a4-db553c205294?action=share&source=collection_link&creator=13777678"
+	},
+	"item": [
+		{
+			"name": "Create Pickup Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Check if status code is valid\r",
+							"pm.test(\"Status code is 200 or 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 400]);\r",
+							"});\r",
+							"\r",
+							"// Security checks - no SQL errors or leakage\r",
+							"pm.test(\"Response is secure (no SQL-related content)\", function () {\r",
+							"    const body = pm.response.text();\r",
+							"    pm.expect(body).to.not.include(\"syntax error\");\r",
+							"    pm.expect(body).to.not.include(\"SQL\");\r",
+							"    pm.expect(pm.response.code).to.not.be.oneOf([500, 502, 503]);\r",
+							"});\r",
+							"\r",
+							"// Response time check\r",
+							"pm.test(\"Response time is acceptable\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"API did not reflect XSS payload\", function () {\r",
+							"    const body = pm.response.text();\r",
+							"    pm.expect(body).to.not.include(\"<script>\");\r",
+							"    pm.expect(body).to.not.include(\"alert(\");\r",
+							"    pm.expect(body).to.not.include(\"onerror=\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const prompt = `\r",
+							"Generate a **SQL Injection payload** to test the field \"numberOfParcels\" in a safe penetration test.\r",
+							"It normally contains a number as a string. Give a payload that could reveal SQL vulnerabilities.\r",
+							"`;\r",
+							"\r",
+							"pm.sendRequest({\r",
+							"  url: 'https://api.openai.com/v1/chat/completions',\r",
+							"  method: 'POST',\r",
+							"  header: {\r",
+							"    'Content-Type': 'application/json',\r",
+							"    'Authorization': 'Bearer {{openai_api_key}}'\r",
+							"  },\r",
+							"  body: {\r",
+							"    mode: 'raw',\r",
+							"    raw: JSON.stringify({\r",
+							"      model: 'gpt-4',\r",
+							"      messages: [{ role: 'user', content: prompt }]\r",
+							"    })\r",
+							"  }\r",
+							"}, function (err, res) {\r",
+							"  const payload = res.json().choices[0].message.content.trim();\r",
+							"  pm.environment.set(\"malicious_parcels\", payload);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1uN3FpVk9jQnFiWlNaTUFwbzFMdyIsInJvbGVzIjpbIkJVU0lORVNTX0FETUlOIl0sImJ1c2luZXNzQWRtaW5JbmZvIjp7ImJ1c2luZXNzSWQiOiJBWG5keU5kbXh6V2EweHVFdVJycmIiLCJidXNpbmVzc05hbWUiOiLYqtiz2Kog2KjYstmG2LMifSwiY291bnRyeSI6eyJfaWQiOiI2MGU0NDgyYzdjYjdkNGJjNDg0OWM0ZDUiLCJuYW1lIjoiRWd5cHQiLCJuYW1lQXIiOiLZhdi12LEiLCJjb2RlIjoiRUcifSwiZW1haWwiOiJtb2hhbWVkLmVsa2hvbGFleSsxQGJvc3RhLmNvIiwicGhvbmUiOiIrMjAxMjAyNDM2MzA5IiwiZ3JvdXAiOnsiX2lkIjoiWGFxbENGQSIsIm5hbWUiOiJCVVNJTkVTU19GVUxMX0FDQ0VTUyIsImNvZGUiOjExNX0sInRva2VuVHlwZSI6IkFDQ0VTUyIsInRva2VuVmVyc2lvbiI6IlYyIiwic2Vzc2lvbklkIjoiMDFKUldKNDgzQVNGODQ2NktEWFBZWkZNUTIiLCJpYXQiOjE3NDQ3MTUyNjAsImV4cCI6MTc0NTkyNDg2MH0.jjFo0wZ1Dx8_mpA2tFPD3bsqVClRVxo4CWnFS2E3tpg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"businessLocationId\": \"Q1MCImvcs\",\r\n  \"contactPerson\": {\r\n    \"_id\": \"pvE7i1MA_8\",\r\n    \"name\": \"Elkholaey\",\r\n    \"phone\": \"+201202436309\"\r\n  },\r\n  \"scheduledDate\": \"2025-04-15\",\r\n  \"numberOfParcels\": \"{{malicious_parcels}}\",\r\n  \"hasBigItems\": false,\r\n  \"repeatedData\": {\r\n    \"repeatedType\": \"One Time\"\r\n  },\r\n  \"creationSrc\": \"Web\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://stg-app.bosta.co/api/v2/pickups",
+					"protocol": "https",
+					"host": [
+						"stg-app",
+						"bosta",
+						"co"
+					],
+					"path": [
+						"api",
+						"v2",
+						"pickups"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Bank Info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check status code\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 400, 401]);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No sensitive data in response\", function () {\r",
+							"    const json = pm.response.json();\r",
+							"    pm.expect(JSON.stringify(json)).to.not.include(\"password\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"No server error (500+)\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"Response doesn’t leak sensitive data\", function () {\r",
+							"    pm.expect(pm.response.text()).to.not.include(\"sql\");\r",
+							"    pm.expect(pm.response.text()).to.not.include(\"<script>\");\r",
+							"    pm.expect(pm.response.text()).to.not.include(\"Exception\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const prompt = `\r",
+							"Generate a **Cross-Site Scripting (XSS)** attack payload to test the field \"beneficiaryName\".\r",
+							"It should simulate a malicious JavaScript attempt.\r",
+							"`;\r",
+							"\r",
+							"pm.sendRequest({\r",
+							"  url: 'https://api.openai.com/v1/chat/completions',\r",
+							"  method: 'POST',\r",
+							"  header: {\r",
+							"    'Content-Type': 'application/json',\r",
+							"    'Authorization': 'Bearer {{openai_api_key}}'\r",
+							"  },\r",
+							"  body: {\r",
+							"    mode: 'raw',\r",
+							"    raw: JSON.stringify({\r",
+							"      model: 'gpt-4',\r",
+							"      messages: [{ role: 'user', content: prompt }]\r",
+							"    })\r",
+							"  }\r",
+							"}, function (err, res) {\r",
+							"  if (res.code === 200) {\r",
+							"    const xss = res.json().choices[0].message.content.trim();\r",
+							"    pm.environment.set(\"malicious_beneficiary\", xss);\r",
+							"  } else {\r",
+							"    console.error(\"OpenAI API failed:\", res);\r",
+							"  }\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"bankInfo\": {\r\n    \"beneficiaryName\": \"{{malicious_beneficiary}}\",\r\n    \"bankName\": \"SCB - بنك سيوسلا\",\r\n    \"accountNumber\": \"12131\",\r\n    \"ibanNumber\": \"asd2112dasadasasdasd221231\",\r\n    \"countryName\": \"Egypt\"\r\n  },\r\n  \"paymentInfoOtp\": \"1231\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://stg-app.bosta.co/api/v2/businesses/add-bank-info",
+					"protocol": "https",
+					"host": [
+						"stg-app",
+						"bosta",
+						"co"
+					],
+					"path": [
+						"api",
+						"v2",
+						"businesses",
+						"add-bank-info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Forget Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 or 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 400]);\r",
+							"});\r",
+							"\r",
+							"// Test for brute-force or enumeration protection\r",
+							"pm.test(\"Generic response to unknown email\", function () {\r",
+							"    const body = pm.response.text();\r",
+							"    pm.expect(body.toLowerCase()).to.not.include(\"user not found\");\r",
+							"});\r",
+							"pm.test(\"No 5xx server errors\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.below(500);\r",
+							"});\r",
+							"pm.test(\"API did not reflect XSS payload\", function () {\r",
+							"    const body = pm.response.text();\r",
+							"    pm.expect(body).to.not.include(\"<script>\");\r",
+							"    pm.expect(body).to.not.include(\"alert(\");\r",
+							"    pm.expect(body).to.not.include(\"onerror=\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const prompt = `\r",
+							"Generate a malicious email address payload to test for email injection or header injection vulnerabilities.\r",
+							"Example: test@example.com%0ABcc:evil@example.com\r",
+							"`;\r",
+							"\r",
+							"pm.sendRequest({\r",
+							"  url: 'https://api.openai.com/v1/chat/completions',\r",
+							"  method: 'POST',\r",
+							"  header: {\r",
+							"    'Content-Type': 'application/json',\r",
+							"    'Authorization': 'Bearer {{openai_api_key}}'\r",
+							"  },\r",
+							"  body: {\r",
+							"    mode: 'raw',\r",
+							"    raw: JSON.stringify({\r",
+							"      model: 'gpt-4',\r",
+							"      messages: [{ role: 'user', content: prompt }]\r",
+							"    })\r",
+							"  }\r",
+							"}, function (err, res) {\r",
+							"  if (!err) {\r",
+							"    const maliciousEmail = res.json().choices[0].message.content.trim();\r",
+							"    pm.environment.set(\"malicious_email\", maliciousEmail);\r",
+							"  }\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"{{malicious_email}}\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://stg-app.bosta.co/api/v2/users/forget-password",
+					"protocol": "https",
+					"host": [
+						"stg-app",
+						"bosta",
+						"co"
+					],
+					"path": [
+						"api",
+						"v2",
+						"users",
+						"forget-password"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

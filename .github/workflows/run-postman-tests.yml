@@ -1,0 +1,32 @@
+name: Run Postman Security Tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name:  Checkout Repository
+        uses: actions/checkout@v3
+
+      - name:  Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name:  Install Newman
+        run: npm install -g newman
+
+      - name:  Run Postman Tests
+        run: ./run_tests.sh
+
+      - name:  Upload Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: postman-test-report
+          path: postman_tests/test-report.json
