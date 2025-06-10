@@ -47,6 +47,28 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
+							"if (!pm.environment.get(\"auth_token\")) {\r",
+							"    const loginPayload = {\r",
+							"        email: \"your@email.com\",     \r",
+							"        password: \"your_password\"\r",
+							"    };\r",
+							"\r",
+							"    pm.sendRequest({\r",
+							"        url: \"https://stg-app.bosta.co/api/auth/login\",   \r",
+							"        method: \"POST\",\r",
+							"        header: { \"Content-Type\": \"application/json\" },\r",
+							"        body: {\r",
+							"            mode: \"raw\",\r",
+							"            raw: JSON.stringify(loginPayload)\r",
+							"        }\r",
+							"    }, function (err, res) {\r",
+							"        if (!err && res.code === 200) {\r",
+							"            const token = res.json().token || res.json().data?.token;\r",
+							"            pm.environment.set(\"auth_token\", token);\r",
+							"        }\r",
+							"    });\r",
+							"}\r",
+							"\r",
 							"const prompt = `\r",
 							"Generate a **SQL Injection payload** to test the field \"numberOfParcels\" in a safe penetration test.\r",
 							"It normally contains a number as a string. Give a payload that could reveal SQL vulnerabilities.\r",
@@ -83,7 +105,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ik1uN3FpVk9jQnFiWlNaTUFwbzFMdyIsInJvbGVzIjpbIkJVU0lORVNTX0FETUlOIl0sImJ1c2luZXNzQWRtaW5JbmZvIjp7ImJ1c2luZXNzSWQiOiJBWG5keU5kbXh6V2EweHVFdVJycmIiLCJidXNpbmVzc05hbWUiOiLYqtiz2Kog2KjYstmG2LMifSwiY291bnRyeSI6eyJfaWQiOiI2MGU0NDgyYzdjYjdkNGJjNDg0OWM0ZDUiLCJuYW1lIjoiRWd5cHQiLCJuYW1lQXIiOiLZhdi12LEiLCJjb2RlIjoiRUcifSwiZW1haWwiOiJtb2hhbWVkLmVsa2hvbGFleSsxQGJvc3RhLmNvIiwicGhvbmUiOiIrMjAxMjAyNDM2MzA5IiwiZ3JvdXAiOnsiX2lkIjoiWGFxbENGQSIsIm5hbWUiOiJCVVNJTkVTU19GVUxMX0FDQ0VTUyIsImNvZGUiOjExNX0sInRva2VuVHlwZSI6IkFDQ0VTUyIsInRva2VuVmVyc2lvbiI6IlYyIiwic2Vzc2lvbklkIjoiMDFKUldKNDgzQVNGODQ2NktEWFBZWkZNUTIiLCJpYXQiOjE3NDQ3MTUyNjAsImV4cCI6MTc0NTkyNDg2MH0.jjFo0wZ1Dx8_mpA2tFPD3bsqVClRVxo4CWnFS2E3tpg",
+							"value": "{{auth_token}}",
 							"type": "string"
 						}
 					]
@@ -151,6 +173,27 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
+							"if (!pm.environment.get(\"auth_token\")) {\r",
+							"    const loginPayload = {\r",
+							"        email: \"your@email.com\",     \r",
+							"        password: \"your_password\"\r",
+							"    };\r",
+							"\r",
+							"    pm.sendRequest({\r",
+							"        url: \"https://stg-app.bosta.co/api/auth/login\",   \r",
+							"        method: \"POST\",\r",
+							"        header: { \"Content-Type\": \"application/json\" },\r",
+							"        body: {\r",
+							"            mode: \"raw\",\r",
+							"            raw: JSON.stringify(loginPayload)\r",
+							"        }\r",
+							"    }, function (err, res) {\r",
+							"        if (!err && res.code === 200) {\r",
+							"            const token = res.json().token || res.json().data?.token;\r",
+							"            pm.environment.set(\"auth_token\", token);\r",
+							"        }\r",
+							"    });\r",
+							"}\r",
 							"const prompt = `\r",
 							"Generate a **Cross-Site Scripting (XSS)** attack payload to test the field \"beneficiaryName\".\r",
 							"It should simulate a malicious JavaScript attempt.\r",
@@ -191,7 +234,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n",
+							"value": "{{auth_token}}",
 							"type": "string"
 						}
 					]
@@ -259,6 +302,27 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
+							"if (!pm.environment.get(\"auth_token\")) {\r",
+							"    const loginPayload = {\r",
+							"        email: \"your@email.com\",     \r",
+							"        password: \"your_password\"\r",
+							"    };\r",
+							"\r",
+							"    pm.sendRequest({\r",
+							"        url: \"https://stg-app.bosta.co/api/auth/login\",   \r",
+							"        method: \"POST\",\r",
+							"        header: { \"Content-Type\": \"application/json\" },\r",
+							"        body: {\r",
+							"            mode: \"raw\",\r",
+							"            raw: JSON.stringify(loginPayload)\r",
+							"        }\r",
+							"    }, function (err, res) {\r",
+							"        if (!err && res.code === 200) {\r",
+							"            const token = res.json().token || res.json().data?.token;\r",
+							"            pm.environment.set(\"auth_token\", token);\r",
+							"        }\r",
+							"    });\r",
+							"}\r",
 							"const prompt = `\r",
 							"Generate a malicious email address payload to test for email injection or header injection vulnerabilities.\r",
 							"Example: test@example.com%0ABcc:evil@example.com\r",
@@ -296,7 +360,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\n",
+							"value": "{{auth_token}}",
 							"type": "string"
 						}
 					]
