@@ -1,4 +1,7 @@
 name: Run Postman Security Tests
+run: |
+    chmod +x run_tests.sh
+    ./run_tests.sh
 
 on:
   push:
