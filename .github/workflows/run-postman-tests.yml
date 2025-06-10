@@ -26,7 +26,7 @@ jobs:
         run: ./run_tests.sh
 
       - name:  Upload Test Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: postman-test-report
           path: postman_tests/test-report.json
